@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Wind Forecast vs Actual</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="echarts.js"></script>
+  </head>
+  <body>
+    <h2>Wind Generation Forecast vs Actual</h2>
+
+    <div class="controls">
+      <div>
+        <label>Start Time</label><br />
+        <input
+          type="datetime-local"
+          id="startTime"
+          min="2024-01-01T00:00"
+          max="2024-01-31T23:30"
+          value="2024-01-01T00:00"
+        />
+      </div>
+
+      <div>
+        <label>End Time</label><br />
+        <input
+          type="datetime-local"
+          id="endTime"
+          min="2024-01-01T00:00"
+          max="2024-01-31T23:30"
+          value="2024-01-03T00:00"
+        />
+      </div>
+
+      <div class="slider-container">
+        <label>Forecast Horizon</label>
+        <input type="range" min="0" max="48" value="4" id="horizonSlider" />
+        <span id="horizonValue">4 Hr</span>
+      </div>
+    </div>
+
+    <div id="chart"></div>
+  </body>
+  <script src="index.js"></script>
+</html>
