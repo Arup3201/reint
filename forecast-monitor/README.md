@@ -14,3 +14,10 @@ Every data point in the forecast line (green line) represents the latest forecas
 
 - Frontend is written is HTML, CSS and JS.
 - Charts are created using Apache Echarts.
+
+**AI Usage**
+
+1. Generate frontend code and styles.
+2. Research terminologies in for the wind data.
+3. Discuss the whether to divide the architecture into frontend and backend.
+4. List the important tests that need to be done for the API.
