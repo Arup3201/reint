@@ -184,6 +184,18 @@ func getWindData(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+func CorsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, OPTIONS")
+		if r.Method == "OPTIONS" {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	var err error
 
@@ -192,13 +204,15 @@ func main() {
 		log.Fatalf("load dataset: %s\n", err)
 	}
 
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /wind-data", getWindData)
+
 	server := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", host, port),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 20 * time.Second,
+		Handler:      CorsMiddleware(mux),
 	}
-
-	http.HandleFunc("GET /wind-data", getWindData)
 
 	log.Printf("[INFO] Server starting at %s:%s\n", host, port)
 
