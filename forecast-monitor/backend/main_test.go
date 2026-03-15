@@ -182,6 +182,46 @@ func TestWindData_GET(t *testing.T) {
 			Forecast:    10629,
 		},
 		{
+			PublishTime: "2024-01-01T08:00:00Z",
+			TargetTime:  "2024-01-01T12:00:00Z",
+			Actual:      6945,
+			Forecast:    10629,
+		},
+	}
+
+	t.Run("should get 2 results with latest forecast with element between same target time", func(t *testing.T) {
+
+		req := httptest.NewRequest("GET", "/wind-data?start=2024-01-01T00:00:00Z&end=2024-01-02T00:00:00Z&horizon=4", nil)
+		w := httptest.NewRecorder()
+		getWindData(w, req)
+
+		res := w.Result()
+		defer res.Body.Close()
+
+		var responseBody struct {
+			Data []WindData `json:"data"`
+		}
+		if err := json.NewDecoder(res.Body).Decode(&responseBody); err != nil {
+			assert.NoError(t, err)
+			return
+		}
+		assert.Equal(t, 2, len(responseBody.Data))
+	})
+
+	DATASET = []WindData{
+		{
+			PublishTime: "2024-01-01T02:30:00Z",
+			TargetTime:  "2024-01-01T12:00:00Z",
+			Actual:      6945,
+			Forecast:    10629,
+		},
+		{
+			PublishTime: "2024-01-01T02:30:00Z",
+			TargetTime:  "2024-01-01T12:30:00Z",
+			Actual:      6945,
+			Forecast:    10629,
+		},
+		{
 			PublishTime: "2024-01-01T02:30:00Z",
 			TargetTime:  "2024-01-01T13:00:00Z",
 			Actual:      6945,

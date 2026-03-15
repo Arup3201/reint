@@ -79,6 +79,13 @@ func LoadDataset() error {
 		}
 	}
 
+	var parseTimeA, parseTimeB time.Time
+	slices.SortFunc(DATASET, func(a, b WindData) int {
+		parseTimeA, _ = time.Parse(time.RFC3339, a.PublishTime)
+		parseTimeB, _ = time.Parse(time.RFC3339, b.PublishTime)
+		return int(parseTimeA.Sub(parseTimeB))
+	})
+
 	return nil
 }
 
@@ -150,19 +157,19 @@ func getWindData(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	var parseTimeA, parseTimeB time.Time
-	slices.SortFunc(results, func(a, b WindData) int {
-		parseTimeA, _ = time.Parse(time.RFC3339, a.PublishTime)
-		parseTimeB, _ = time.Parse(time.RFC3339, b.PublishTime)
-		return int(parseTimeA.Sub(parseTimeB))
-	})
-
 	if len(results) == 0 {
 		json.NewEncoder(w).Encode(map[string]any{
 			"data": results,
 		})
 		return
 	}
+
+	var parseTimeA, parseTimeB time.Time
+	slices.SortFunc(results, func(a, b WindData) int {
+		parseTimeA, _ = time.Parse(time.RFC3339, a.TargetTime)
+		parseTimeB, _ = time.Parse(time.RFC3339, b.TargetTime)
+		return int(parseTimeA.Sub(parseTimeB))
+	})
 
 	var filteredResults []WindData
 	i, k := 0, 0
