@@ -55,7 +55,7 @@
     chart.showLoading({ text: "Loading…", maskColor: "rgba(255,255,255,0.6)" });
 
     try {
-      const response = await fetch(buildURL());
+      const response = await fetch("http://localhost:8080" + buildURL());
 
       if (!response.ok) {
         throw new Error(
