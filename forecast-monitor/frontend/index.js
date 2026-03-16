@@ -81,7 +81,8 @@
 
       const responseData = await response.json();
       const data = responseData.data;
-      const timestamps = [],
+      const actualTimestamps = [],
+      forecastTimestamps = [],
         actual = [],
         forecast = [];
 
@@ -90,15 +91,25 @@
       }
 
       data.map((r) => {
-        timestamps.push(r.time);
+        actualTimestamps.push(r.time);
         actual.push(r.actual);
-        forecast.push(r.forecast);
+        if (r.forecast!==null) {
+          forecastTimestamps.push(r.time);
+          forecast.push(r.forecast);
+        }
       });
 
       chart.setOption({
         series: [
-          { name: "Actual", data: toSeriesData(timestamps, actual) },
-          { name: "Forecast", data: toSeriesData(timestamps, forecast) },
+          { name: "Actual", data: toSeriesData(actualTimestamps, actual) },
+          { name: "Forecast", data: toSeriesData(forecastTimestamps, forecast) },
+        ],
+      })
+
+      chart.setOption({
+        series: [
+          { name: "Actual", data: toSeriesData(actualTimestamps, actual) },
+          { name: "Forecast", data: toSeriesData(forecastTimestamps, forecast) },
         ],
       });
     } catch (err) {
