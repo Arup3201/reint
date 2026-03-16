@@ -19,22 +19,6 @@
       name: "Wind Power (MW)",
     },
     dataZoom: [{ type: "inside" }, { type: "slider" }],
-    series: [
-      {
-        name: "Actual",
-        type: "line",
-        data: [],
-        smooth: true,
-        lineStyle: { color: "blue" },
-      },
-      {
-        name: "Forecast",
-        type: "line",
-        data: [],
-        smooth: true,
-        lineStyle: { color: "green" },
-      },
-    ],
   };
 
   chart.setOption(option);
@@ -101,10 +85,19 @@
 
       chart.setOption({
         series: [
-          { name: "Actual", data: toSeriesData(actualTimestamps, actual) },
+          {
+            name: "Actual",
+            type: "line",
+            data: toSeriesData(actualTimestamps, actual),
+            smooth: true,
+            lineStyle: { color: "blue" },
+          },
           {
             name: "Forecast",
+            type: "line",
             data: toSeriesData(forecastTimestamps, forecast),
+            smooth: true,
+            lineStyle: { color: "green" },
           },
         ],
       });
