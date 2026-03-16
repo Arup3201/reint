@@ -65,8 +65,7 @@
 
       const responseData = await response.json();
       const data = responseData.data;
-      const actualTimestamps = [],
-        forecastTimestamps = [],
+      const timestamps = [],
         actual = [],
         forecast = [];
 
@@ -75,12 +74,9 @@
       }
 
       data.map((r) => {
-        actualTimestamps.push(r.time);
+        timestamps.push(r.time);
         actual.push(r.actual);
-        if (r.forecast !== null) {
-          forecastTimestamps.push(r.time);
-          forecast.push(r.forecast);
-        }
+        forecast.push(r.forecast ?? null);
       });
 
       chart.setOption({
@@ -88,15 +84,16 @@
           {
             name: "Actual",
             type: "line",
-            data: toSeriesData(actualTimestamps, actual),
+            data: toSeriesData(timestamps, actual),
             smooth: true,
             lineStyle: { color: "blue" },
           },
           {
             name: "Forecast",
             type: "line",
-            data: toSeriesData(forecastTimestamps, forecast),
+            data: toSeriesData(timestamps, forecast),
             smooth: true,
+            connectNulls: true,
             lineStyle: { color: "green" },
           },
         ],
