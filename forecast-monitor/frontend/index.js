@@ -52,7 +52,7 @@
     const start = toISOString(startInput.value);
     const end = toISOString(endInput.value);
     const horizon = slider.value;
-    return `/wind-data?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&horizon=${horizon}`;
+    return `/api/wind-data?start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}&horizon=${horizon}`;
   }
 
   /**
@@ -71,7 +71,7 @@
     chart.showLoading({ text: "Loading…", maskColor: "rgba(255,255,255,0.6)" });
 
     try {
-      const response = await fetch("http://localhost:8080" + buildURL());
+      const response = await fetch(buildURL());
 
       if (!response.ok) {
         throw new Error(
