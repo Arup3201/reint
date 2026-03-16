@@ -1,5 +1,7 @@
 # REint Assignment
 
+LINK: [REint forecast monitoring app](https://itsdeployedbyme.dpdns.org/)
+
 **Files and folders**
 
 1. `forecast-monitor`: Contains the backend and frontend for the forecast monitoring application. Backend is using Golang and frontend is using HTML, CSS and JS.
