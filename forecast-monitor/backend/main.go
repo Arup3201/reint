@@ -16,10 +16,10 @@ const (
 )
 
 type WindData struct {
-	TargetTime  string  `json:"time"`
-	PublishTime string  `json:"publish_time"`
-	Actual      float64 `json:"actual"`
-	Forecast    float64 `json:"forecast"`
+	TargetTime  string   `json:"time"`
+	PublishTime *string  `json:"publish_time"`
+	Actual      float64  `json:"actual"`
+	Forecast    *float64 `json:"forecast"`
 }
 
 var (
@@ -66,23 +66,33 @@ func LoadDataset() error {
 	}
 
 	DATASET = []WindData{}
+	var isNull bool
 	for _, actual := range actualWindData {
+		isNull = true
 		for _, forecast := range forecastedWindData {
 			if actual.StartTime == forecast.StartTime {
+				isNull = false
 				DATASET = append(DATASET, WindData{
 					TargetTime:  actual.StartTime,
-					PublishTime: forecast.PublishTime,
+					PublishTime: &forecast.PublishTime,
 					Actual:      actual.Generation,
-					Forecast:    forecast.Generation,
+					Forecast:    &forecast.Generation,
 				})
 			}
+		}
+
+		if isNull {
+			DATASET = append(DATASET, WindData{
+				TargetTime: actual.StartTime,
+				Actual:     actual.Generation,
+			})
 		}
 	}
 
 	var parseTimeA, parseTimeB time.Time
 	slices.SortFunc(DATASET, func(a, b WindData) int {
-		parseTimeA, _ = time.Parse(time.RFC3339, a.PublishTime)
-		parseTimeB, _ = time.Parse(time.RFC3339, b.PublishTime)
+		parseTimeA, _ = time.Parse(time.RFC3339, a.TargetTime)
+		parseTimeB, _ = time.Parse(time.RFC3339, b.TargetTime)
 		return int(parseTimeA.Sub(parseTimeB))
 	})
 
@@ -149,10 +159,13 @@ func getWindData(w http.ResponseWriter, r *http.Request) {
 	var results = []WindData{}
 	for _, data := range DATASET {
 		parsedTargetTime, _ = time.Parse(time.RFC3339, data.TargetTime)
-		parsedPublishTime, _ = time.Parse(time.RFC3339, data.PublishTime)
+		if data.PublishTime != nil {
+			parsedPublishTime, _ = time.Parse(time.RFC3339, *data.PublishTime)
+		}
 		if parsedTargetTime.Sub(startTime) >= 0 &&
 			endTime.Sub(parsedTargetTime) >= 0 &&
-			parsedTargetTime.Sub(parsedPublishTime) >= time.Duration(horizonInt)*time.Hour {
+			(data.PublishTime == nil ||
+				parsedTargetTime.Sub(parsedPublishTime) >= time.Duration(horizonInt)*time.Hour) {
 			results = append(results, data)
 		}
 	}
@@ -163,13 +176,6 @@ func getWindData(w http.ResponseWriter, r *http.Request) {
 		})
 		return
 	}
-
-	var parseTimeA, parseTimeB time.Time
-	slices.SortFunc(results, func(a, b WindData) int {
-		parseTimeA, _ = time.Parse(time.RFC3339, a.TargetTime)
-		parseTimeB, _ = time.Parse(time.RFC3339, b.TargetTime)
-		return int(parseTimeA.Sub(parseTimeB))
-	})
 
 	var filteredResults []WindData
 	i, k := 0, 0
