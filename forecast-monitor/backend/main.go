@@ -218,7 +218,7 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("GET /wind-data", getWindData)
+	mux.HandleFunc("GET /api/wind-data", getWindData)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf("%s:%s", host, port),
